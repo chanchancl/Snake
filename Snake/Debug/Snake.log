@@ -1,0 +1,4 @@
+﻿  SnakeGame.cpp
+d:\program\project\snake\snake\snakegame.cpp(89): warning C4267: “参数”: 从“size_t”转换到“SHORT”，可能丢失数据
+d:\program\project\snake\snake\snakegame.cpp(100): warning C4267: “参数”: 从“size_t”转换到“SHORT”，可能丢失数据
+  Snake.vcxproj -> D:\Program\Project\Snake\Debug\Snake.exe
