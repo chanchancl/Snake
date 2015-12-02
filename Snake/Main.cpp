@@ -9,19 +9,16 @@ int main()
 	game->Init();
 	CConsole &con = *game->GetConsole();
 	con.Init();
-
 	game->GetConsole()->SetCursorVisible(false);
 	game->DrawContent();
 	game->DrawMenu();
-	while (true)
+
+	CTimer timer(30);
+	while (timer)
 	{
-		//game->Run();
-		game->DrawContent();
 		
-		if (con.IsKeyDown('a'))
-			cout << "a  is down" << endl;
-		else
-			Sleep(1);
+		
+		
 	}
 
 	
