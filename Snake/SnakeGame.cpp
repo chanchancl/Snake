@@ -5,7 +5,7 @@
 
 CSnakeGame* CSnakeGame::pInstance = nullptr;
 
-CSnakeGame::CSnakeGame() : m_Console(nullptr)
+CSnakeGame::CSnakeGame() : m_Console(nullptr), m_Snake(nullptr), m_bNeedToRender(true), m_uChoose(0)
 {
 }
 
@@ -27,12 +27,17 @@ bool CSnakeGame::Init()
 		//Console 创建 或 初始化错误
 		return false;
 	}
+	
+	/*
+	//创建蛇，但不初始化
 	m_Snake = new CSnake;
 	if (!m_Snake)
-		return false;
+		return false;*/
 
+	//进入游戏， 目录状态
 	SetGameState(ST_MENU);
 
+	
 
 	return true;
 }
@@ -40,10 +45,10 @@ bool CSnakeGame::Init()
 bool CSnakeGame::Run()
 {
 	//m_Snake->Updata();
-	switch (m_iState)
+	switch (m_uState)
 	{
 	case ST_MENU:
-		DrawMenu();
+		OnMenu();
 		break;
 
 
@@ -58,11 +63,21 @@ bool CSnakeGame::Run()
 
 bool CSnakeGame::Render()
 {
-	DrawContent();
-	m_Snake->Draw();
-	//DrawFood();
+	if (m_bNeedToRender)
+	{
+		DrawContent();
+		m_Snake->Draw();
+		//DrawFood();
 
-	return false;
+		m_bNeedToRender = false;
+		return true;
+	}
+	return true;
+}
+
+inline void CSnakeGame::NeedToRender()
+{
+	m_bNeedToRender = true;
 }
 
 
@@ -82,9 +97,43 @@ void CSnakeGame::DrawContent()
 		m_Console->DrawPixel(x, 25, STD_GREEN);
 }
 
-void CSnakeGame::DrawMenu()
+
+
+
+void CSnakeGame::OnMenu()
 {
+	static CTimer ChooseChange(300);
 	
+	int MenuItems = 2;
+
+	if (m_uChoose == 0)
+	{
+		m_uChoose = 1;
+		ChooseChange.OnTick();
+	}
+
+	//if (ChooseChange.GetElapseTime() >= ChooseChange.GetInteval() )
+	//{
+		if (m_Console->IsKeyDown(VK_LEFT))
+		{
+			if (m_uChoose != 1)
+			{
+				m_uChoose--;
+				ChooseChange.OnTick();
+			}
+		}
+		else if (m_Console->IsKeyDown(VK_RIGHT))
+		{
+			if (m_uChoose != MenuItems)
+			{
+				m_uChoose++;
+				ChooseChange.OnTick();
+			}
+		}
+
+	//}
+
+
 	wstring title = L"贪吃蛇";
 	m_Console->DrawString((80 - (SHORT)title.size()) / 2-1, 25 * 1 / 3, title, STD_WHITE);
 	wstring text[] = {
@@ -96,15 +145,25 @@ void CSnakeGame::DrawMenu()
 	int sub = 10;
 	int l = text[0].size() + text[1].size() + sub;
 
+
 	m_Console->DrawString((80 - l) / 2, 25 * 2 / 3, text[0],STD_WHITE);
-	m_Console->DrawLineX((80 - l) / 2+1, (80 - l) / 2 + (SHORT)text[0].size()*2-1,25*2/3, STD_RED);
 	m_Console->DrawString((80 - l) / 2 + sub, 25 * 2 / 3, text[1],STD_WHITE);
-	
+
+	if (m_uChoose == 1)
+	{
+		m_Console->DrawLineX((80 - l) / 2 + sub + 1, (80 - l) / 2 + sub + (SHORT)text[1].size() * 2 - 1, 25 * 2 / 3, STD_BLACK);
+		m_Console->DrawLineX((80 - l) / 2 + 1, (80 - l) / 2 + (SHORT)text[0].size() * 2 - 1, 25 * 2 / 3, STD_RED);
+	}
+	else
+	{
+		m_Console->DrawLineX((80 - l) / 2 + sub + 1, (80 - l) / 2 + sub + (SHORT)text[1].size() * 2 - 1, 25 * 2 / 3, STD_RED);
+		m_Console->DrawLineX((80 - l) / 2 + 1, (80 - l) / 2 + (SHORT)text[0].size() * 2 - 1, 25 * 2 / 3, STD_BLACK);
+	}
 }
 
 void CSnakeGame::SetGameState(UINT state)
 {
-	m_iState = state;
+	m_uState = state;
 }
 
 CConsole* CSnakeGame::GetConsole()

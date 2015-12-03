@@ -19,9 +19,10 @@ public:
 	bool Init();
 	bool Run();
 	bool Render();
+	void NeedToRender();
 
 	void DrawContent();
-	void DrawMenu();
+	void OnMenu();
 
 	void SetGameState(UINT state);
 
@@ -29,7 +30,7 @@ public:
 
 	static CSnakeGame* GetInstance();
 
-
+	UINT m_uChoose;
 private:
 	CConsole *m_Console;
 	CSnake	 *m_Snake;
@@ -38,7 +39,10 @@ private:
 	//  Gaming
 	//  Pause
 	//  GameOver
-	UINT m_iState;
+	UINT m_uState;
+	
+
+	bool m_bNeedToRender;
 
 	static CSnakeGame *pInstance;
 };

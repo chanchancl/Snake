@@ -71,7 +71,8 @@ private:
 	HANDLE m_StdOut,m_StdIn;
 
 	// =false时，线程退出
-	bool m_InputThread;
+	bool m_bInputThread;
+	HANDLE m_hInputThread;
 	
 	// 用来管理键盘的输入状态 当且仅当 m_bKeyInput 为true时其值有效
 	map<DWORD, bool> m_KeyMap;

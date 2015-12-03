@@ -22,16 +22,23 @@ public:
 	CTimer(DWORD inteval = 0);
 	~CTimer();
 
+public:
+	//功能一区
 	DWORD OnTick();
 
-	DWORD GetTime();
-	DWORD GetLastTime();
+	DWORD  GetTime();
+	DWORD  GetLastTime();
 	DWORD& GetInteval();
+	DWORD  GetElapseTime();
 
 	void WaitForTimer();
 	
 	operator bool();
 
+
+public:
+	//功能二区
+	
 	
 
 private:

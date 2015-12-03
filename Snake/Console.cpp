@@ -6,7 +6,46 @@ void OnProcess(LPVOID process);
 
 CConsole* CConsole::pInstance = nullptr;
 
-CConsole::CConsole() : m_StdOut(NULL),m_StdIn(NULL),m_bKeyInput(false),m_InputThread(false)
+/*
+关于color
+控制台的color存储在8位的数据上
+*********************************
+| 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+*********************************
+
+其中  1 - 4 位表示前景色，即字符颜色
+5 - 8 位标识背景色。
+颜色一共有 2^4 = 16 种
+对每个4位的颜色单元  第1位标识blue
+第2位标识green
+第3位标识red
+第4位标识 增强
+所以给出下表
+0=黑色  1=蓝色  2=绿色  3=湖蓝色  4=红色
+
+5=紫色  6=黄色  7=白色  8=灰色    9=淡蓝色
+
+A=淡绿色 B=淡浅绿色  C=淡红色  D=淡紫色
+
+E=淡黄色   F=亮白色
+*/
+
+StdColor MakeColor(Color back, Color font)
+{
+	return   (WORD)((back << 4) | font);
+}
+
+Color GetBackColor(StdColor color)
+{
+	return (Color)((color & 0xf0) >> 4);
+}
+Color GetForcColor(StdColor color)
+{
+	return (Color)(color & 0xf);
+}
+
+
+CConsole::CConsole() : m_StdOut(NULL),m_StdIn(NULL),m_bKeyInput(false),m_bInputThread(false), m_hInputThread(nullptr)
 {
 
 }
@@ -40,8 +79,8 @@ bool CConsole::Init()
 	*/
 
 	//创建一个线程来管理按键输入
-	_beginthread(OnProcess, NULL, NULL);
-	m_InputThread = true;
+	m_hInputThread = (HANDLE) _beginthread(OnProcess, NULL, NULL);
+	m_bInputThread = true;
 	m_bKeyInput = true;
 
 	return true;
@@ -70,43 +109,6 @@ void CConsole::MoveCursor(SHORT x, SHORT y)
 {
 	COORD coord = { x - 1,y - 1 };
 	SetConsoleCursorPosition(m_StdOut, coord);
-}
-/*
-  关于color
-	  控制台的color存储在8位的数据上
-	  *********************************
-	  | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
-	  *********************************
-
-	  其中  1 - 4 位表示前景色，即字符颜色
-	        5 - 8 位标识背景色。
-	  颜色一共有 2^4 = 16 种
-	  对每个4位的颜色单元  第1位标识blue
-						   第2位标识green
-						   第3位标识red
-						   第4位标识 增强
-	  所以给出下表
-	  0=黑色  1=蓝色  2=绿色  3=湖蓝色  4=红色
-
-	  5=紫色  6=黄色  7=白色  8=灰色    9=淡蓝色
-
-	  A=淡绿色 B=淡浅绿色  C=淡红色  D=淡紫色
-
-	  E=淡黄色   F=亮白色
-	*/
-
-StdColor MakeColor(Color back, Color font)
-{
-	return   (WORD)((back << 4) | font);
-}
-
-Color GetBackColor(StdColor color)
-{
-	return (Color)((color & 0xf0) >> 4);
-}
-Color GetForcColor(StdColor color)
-{
-	return (Color)(color & 0xf);
 }
 
 
@@ -161,6 +163,9 @@ bool CConsole::IsKeyDown(DWORD key)
 		return false;
 
 	auto it = m_KeyMap.find(key);
+
+	//cout << key << " state is " << (it == m_KeyMap.end() ? false : it->second) <<endl;
+
 	if (it == m_KeyMap.end())
 		return false;
 	return m_KeyMap[key];
@@ -183,7 +188,7 @@ bool CConsole::IsEnableKeyInput()
 
 bool CConsole::IsThreadRun()
 {
-	return m_InputThread;
+	return m_bInputThread && m_hInputThread != nullptr;
 }
 
 CConsole * CConsole::GetInstance()
@@ -201,6 +206,7 @@ CConsole * CConsole::GetInstance()
 void CConsole::__SetKeyState(DWORD key, bool state)
 {
 	m_KeyMap[key] = state;
+	//cout << "set " << key << " state is " << state << endl;
 }
 
 void CConsole::__SetKeyInput(bool state)
@@ -211,9 +217,13 @@ void CConsole::__SetKeyInput(bool state)
 
 void CConsole::__ExitInputThread()
 {
-	m_InputThread = false;
+	m_bInputThread = false;
+	if (m_hInputThread)
+	{
+		CloseHandle(m_hInputThread);
+		m_bInputThread = nullptr;
+	}
 }
-
 
 
 void OnProcess(LPVOID process)
@@ -226,21 +236,28 @@ void OnProcess(LPVOID process)
 		con = CConsole::GetInstance();
 		Sleep(30);
 	}*/
-	while (con->IsThreadRun())
+	bool debug = false;
+	while (true)
 	{
 		if (con->IsEnableKeyInput())
 		{
 			ReadConsoleInput(con->GetStdIn(), &record, 1, &num);
 			if (record.EventType == KEY_EVENT) 
 			{
-				WORD key = record.Event.KeyEvent.wVirtualKeyCode;
+				DWORD key = record.Event.KeyEvent.wVirtualKeyCode;
 				bool down = record.Event.KeyEvent.bKeyDown == 1 ? true : false;
 
+				if(debug)
+					cout << key << " is down" << endl;
+
 				//。。。。区分主键盘区和其他按键。。方便使用ASCII码来获取主键盘区按键状态
-				if((key >=30 && key <=39) || (key>=41 && key <= 0x5a))
+				if((key >=0x30 && key <=0x39) || (key>=0x41 && key <= 0x5a))
 					con->__SetKeyState((DWORD)record.Event.KeyEvent.uChar.AsciiChar, down );
 				else
-					con->__SetKeyState(key, down);
+				{
+					//cout << "Will Set " << key << " state to " << down << endl;
+					con->__SetKeyState((DWORD)key, down);
+				}
 			}
 		}
 		else
@@ -248,5 +265,6 @@ void OnProcess(LPVOID process)
 			Sleep(1);
 		}
 	}
-	_endthread();
+	//_endthread();
 }
+

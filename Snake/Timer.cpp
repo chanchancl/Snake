@@ -28,8 +28,12 @@ inline DWORD CTimer::GetLastTime()
 
 DWORD & CTimer::GetInteval()
 {
-	// TODO: 在此处插入 return 语句
 	return m_Inteval;
+}
+
+DWORD CTimer::GetElapseTime()
+{
+	return GetTime() - GetLastTime();
 }
 
 void CTimer::WaitForTimer()
@@ -37,7 +41,7 @@ void CTimer::WaitForTimer()
 	if (m_Inteval == 0L)
 		return;
 
-	// 暂停线程，直到时间差大于即时间隔
+	// 暂停线程，直到时间差大于即时间隔  因为是内联函数。。所以效率不用担心。。与原函数没区别。。
 	while (GetTime() - GetLastTime() <= m_Inteval)
 		Sleep(1);
 	
