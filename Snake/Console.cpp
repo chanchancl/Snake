@@ -65,6 +65,9 @@ CConsole::~CConsole()
 	//CloseHandle(m_StdIn);
 	m_StdOut = NULL;
 	m_StdIn = NULL;
+
+	if (pInstance)
+		pInstance = nullptr;
 }
 
 bool CConsole::Init()
@@ -105,7 +108,7 @@ void CConsole::SetCursorVisible(bool vi)
 	info.bVisible = vi;
 	SetConsoleCursorInfo(m_StdOut, &info);
 }
-void CConsole::MoveCursor(SHORT x, SHORT y)
+void CConsole::SetCursorPosition(SHORT x, SHORT y)
 {
 	COORD coord = { x - 1,y - 1 };
 	SetConsoleCursorPosition(m_StdOut, coord);
@@ -125,7 +128,7 @@ void CConsole::DrawPixel(SHORT x, SHORT y, Color color)
 
 void CConsole::DrawLineX(SHORT x0, SHORT x1, SHORT y, Color color)
 {
-	SHORT len = x1 - x0;
+	SHORT len = x1 - x0 +1;
 	COORD coord = { x0 - 1,y - 1 };
 	DWORD p;
 
@@ -136,6 +139,23 @@ void CConsole::DrawLineX(SHORT x0, SHORT x1, SHORT y, Color color)
 
 	WriteConsoleOutputAttribute(m_StdOut, oldcolor, len, coord, &p);
 	//卧槽。。最后这个参数不能填NULL，填NULL就会报错。。
+}
+
+void CConsole::DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color)
+{
+	COORD coord = { x-1, y0-1 };
+	DWORD p;
+	StdColor oldcolor;
+
+	
+	for ( ; coord.Y <= y1-1 ; coord.Y++)
+	{
+		ReadConsoleOutputAttribute(m_StdOut, &oldcolor, 1, coord, &p);
+		oldcolor = MakeColor(color, GetForcColor(oldcolor));
+		WriteConsoleOutputAttribute(m_StdOut, &oldcolor, 1, coord, &p);
+	}
+
+	
 }
 
 //设置(x,y)后面的文字为 str，字体颜色为color，但不改变背景色

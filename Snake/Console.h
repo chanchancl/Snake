@@ -36,11 +36,11 @@ public:
 
 	bool SetTitle(std::wstring title);
 	void SetCursorVisible(bool vi);
-
-	void MoveCursor(SHORT x, SHORT y);
+	void SetCursorPosition(SHORT x, SHORT y);
 
 	void DrawPixel(SHORT x, SHORT y, Color color);
 	void DrawLineX(SHORT x0, SHORT x1, SHORT y, Color color);
+	void DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color);
 	void DrawString(SHORT x, SHORT y, wstring str,Color color);
 
 	//获取指定按键状态 

@@ -5,7 +5,13 @@
 #define ST_PAUSE	3
 #define ST_GAMEOVER	4
 
+namespace state 
+{
+	class CStateMachine;
+}
+class CSnake;
 
+using namespace state;
 
 class CSnakeGame
 {
@@ -17,30 +23,16 @@ public:
 
 public:
 	bool Init();
-	bool Run();
-	bool Render();
-	void NeedToRender();
 
-	void DrawContent();
-	void OnMenu();
 
-	void SetGameState(UINT state);
-
+	CStateMachine* GetStateMachine();
 	CConsole* GetConsole();
-
 	static CSnakeGame* GetInstance();
 
-	UINT m_uChoose;
 private:
 	CConsole *m_Console;
 	CSnake	 *m_Snake;
-
-	//  Menu
-	//  Gaming
-	//  Pause
-	//  GameOver
-	UINT m_uState;
-	
+	CStateMachine *m_StateMachine;
 
 	bool m_bNeedToRender;
 

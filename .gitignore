@@ -85,3 +85,6 @@ Debug/Snake.ilk
 Snake/Debug/vc140.idb
 *.log
 Snake.sdf
+*.sdf
+Snake/Debug/main.obj.enc
+*.idb

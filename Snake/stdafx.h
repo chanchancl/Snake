@@ -19,6 +19,7 @@
 
 
 //自己的头文件
+#include "State.h"
 #include "Console.h"
 #include "Snake.h"
 #include "SnakeGame.h"

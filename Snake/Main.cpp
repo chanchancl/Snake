@@ -3,20 +3,23 @@
 
 #include "stdafx.h"
 
+#include <time.h>
+
 int main()
 {
+	
 	CSnakeGame *game = CSnakeGame::GetInstance();
 	game->Init();
 	CConsole &con = *game->GetConsole();
 	con.Init();
 	game->GetConsole()->SetCursorVisible(false);
-	game->DrawContent();
-	game->OnMenu();
 
 	CTimer timer(30);
-	while (timer)
+	//while (timer)
 	{
-		game->OnMenu();
+		wcout << game->GetStateMachine()->GetCurrState()->GetStateName();;
+		//game->GetStateMachine()->GetCurrState()->Input();
+		//game->GetStateMachine()->GetCurrState()->Render();
 		/*if (con.IsKeyDown(VK_LEFT))
 		{
 			cout << "Left is down" << endl;
@@ -25,7 +28,6 @@ int main()
 			Sleep(1);*/
 		
 	}
-
 	
     return 0;
 }
