@@ -1,2 +1,2 @@
-﻿  Main.cpp
-  Snake.vcxproj -> D:\Program\Project\Snake\Debug\Snake.exe
+﻿  State.cpp
+d:\program\project\snake\snake\state.cpp(1): fatal error C1041: 无法打开程序数据库“D:\Program\Project\Snake\Snake\Debug\vc140.idb”；如果要将多个 CL.EXE 写入同一个 .PDB 文件，请使用 /FS

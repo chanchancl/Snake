@@ -34,12 +34,15 @@ public:
 public:
 	bool Init();
 
-	bool SetTitle(std::wstring title);
+	bool SetTitle(wstring title);
 	void SetCursorVisible(bool vi);
 	void SetCursorPosition(SHORT x, SHORT y);
 
+	// 画单个像素（背景）
 	void DrawPixel(SHORT x, SHORT y, Color color);
+	// 按X方向画像素   (x0<x1)
 	void DrawLineX(SHORT x0, SHORT x1, SHORT y, Color color);
+	// 按Y方向画像素  (y0<y1)
 	void DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color);
 	void DrawString(SHORT x, SHORT y, wstring str,Color color);
 
@@ -95,10 +98,6 @@ StdColor MakeColor(Color back, Color font = 0);
 Color GetBackColor(StdColor color);
 Color GetForcColor(StdColor color);
 
-/*
-   改进前的。。。typedef  区分一下 StdColor和Color
-WORD MakeColor(WORD back, WORD font = 0);
 
-WORD GetBackColor(WORD color);
-WORD GetForcColor(WORD color);
-*/
+int CharWideInConsole(const wstring& str);
+#define CharWideIC CharWideInConsole

@@ -1,13 +1,15 @@
+
 #include "stdafx.h"
 #include "Console.h"
+#include <ctype.h>
 #include <process.h>
 
 void OnProcess(LPVOID process);
 
 CConsole* CConsole::pInstance = nullptr;
 
+//关于color
 /*
-关于color
 控制台的color存储在8位的数据上
 *********************************
 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
@@ -42,6 +44,14 @@ Color GetBackColor(StdColor color)
 Color GetForcColor(StdColor color)
 {
 	return (Color)(color & 0xf);
+}
+
+int CharWideInConsole(const wstring& str)
+{
+	int l = 0;
+	for (const auto it : str)
+		l += iswascii(it) ? 1 : 2;
+	return l;
 }
 
 
@@ -139,6 +149,10 @@ void CConsole::DrawLineX(SHORT x0, SHORT x1, SHORT y, Color color)
 
 	WriteConsoleOutputAttribute(m_StdOut, oldcolor, len, coord, &p);
 	//卧槽。。最后这个参数不能填NULL，填NULL就会报错。。
+
+	//delete[] oldcolor;
+	//...oldcolor不能delete，delete后会出问题
+	
 }
 
 void CConsole::DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color)
@@ -158,24 +172,33 @@ void CConsole::DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color)
 	
 }
 
+
+
 //设置(x,y)后面的文字为 str，字体颜色为color，但不改变背景色
 void CConsole::DrawString(SHORT x, SHORT y, wstring str,Color color)
 {
-	int len = str.size();
-	StdColor *oldcolor = new StdColor[len];
+	int WideInConsole = [&]()-> int { int l=0;
+		for (auto it : str)
+			l += isascii(it) ? 1 : 2;
+		return l;
+	}();
+	int SizeOfCharacter = str.size();
+
+	StdColor *oldcolor = new StdColor[WideInConsole];
 	COORD coord = { x-1,y-1 };
 	DWORD p;
-	if (len + x - 1 > 80) //CONSOLE_WIDTH
+	if (WideInConsole + x - 1 > 80) //CONSOLE_WIDTH
 		return;
-	ReadConsoleOutputAttribute(m_StdOut, oldcolor, len, coord, &p);
-	for (int i = 0; i < len; i++)
+	ReadConsoleOutputAttribute(m_StdOut, oldcolor, WideInConsole, coord, &p);
+	for (int i = 0; i < WideInConsole; i++)
 		oldcolor[i] = MakeColor(GetBackColor(oldcolor[i]), color);
 
-	WriteConsoleOutputAttribute(m_StdOut, oldcolor, len, coord, &p);
-	WriteConsoleOutputCharacter(m_StdOut, str.c_str(), len, coord, &p);
+	WriteConsoleOutputAttribute(m_StdOut, oldcolor, WideInConsole, coord, &p);
+	WriteConsoleOutputCharacter(m_StdOut, str.c_str(), SizeOfCharacter, coord, &p);
 
 	delete[] oldcolor;
 }
+
 
 bool CConsole::IsKeyDown(DWORD key)
 {
@@ -267,17 +290,11 @@ void OnProcess(LPVOID process)
 				DWORD key = record.Event.KeyEvent.wVirtualKeyCode;
 				bool down = record.Event.KeyEvent.bKeyDown == 1 ? true : false;
 
-				if(debug)
-					cout << key << " is down" << endl;
-
 				//。。。。区分主键盘区和其他按键。。方便使用ASCII码来获取主键盘区按键状态
 				if((key >=0x30 && key <=0x39) || (key>=0x41 && key <= 0x5a))
 					con->__SetKeyState((DWORD)record.Event.KeyEvent.uChar.AsciiChar, down );
 				else
-				{
-					//cout << "Will Set " << key << " state to " << down << endl;
 					con->__SetKeyState((DWORD)key, down);
-				}
 			}
 		}
 		else

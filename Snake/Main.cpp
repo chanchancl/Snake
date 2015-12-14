@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 
-#include <time.h>
 
 int main()
 {
@@ -15,18 +14,11 @@ int main()
 	game->GetConsole()->SetCursorVisible(false);
 
 	CTimer timer(30);
-	//while (timer)
+	while (timer)
 	{
-		wcout << game->GetStateMachine()->GetCurrState()->GetStateName();;
-		//game->GetStateMachine()->GetCurrState()->Input();
-		//game->GetStateMachine()->GetCurrState()->Render();
-		/*if (con.IsKeyDown(VK_LEFT))
-		{
-			cout << "Left is down" << endl;
-		}
-		else
-			Sleep(1);*/
-		
+		//wcout << game->GetStateMachine()->GetCurrState()->GetStateName();;
+		game->GetStateMachine()->GetCurrState()->Render();
+		game->GetStateMachine()->GetCurrState()->Input();
 	}
 	
     return 0;

@@ -42,10 +42,7 @@ namespace state
 	{
 	public:
 		CStateMachine() : pPrevState(nullptr), pCurrState(nullptr) {}
-		~CStateMachine()
-		{
-
-		}
+		~CStateMachine() {}
 
 		void ChangeState(State* state)
 		{
@@ -80,7 +77,7 @@ namespace state
 	class MenuState : public State
 	{
 	public:
-		MenuState() : iChoose(0), iMenuItems(2) { }
+		MenuState() : iChoose(0),iMenuItems(2) { }
 	public:
 		virtual void Enter()
 		{
@@ -110,11 +107,13 @@ namespace state
 	class GameState : public State
 	{
 	public:
+		virtual void Enter();
+		virtual void Exit();
 
+		virtual void Input();
+		virtual void Render();
 
 		DECLARE_STATE(GameState)
-		//virtual wstring GetStateName() { return L"GameState"; }
-		//static GameState GetInstance() { static GameState gs; return gs; }
 	};
 
 
