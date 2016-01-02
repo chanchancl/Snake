@@ -16,11 +16,9 @@ int main()
 	CTimer timer(30);
 	while (timer)
 	{
-		//wcout << game->GetStateMachine()->GetCurrState()->GetStateName();;
-		game->GetStateMachine()->GetCurrState()->Render();
-		game->GetStateMachine()->GetCurrState()->Input();
+		
 	}
-	
+
     return 0;
 }
 

@@ -34,7 +34,7 @@ public:
 public:
 	bool Init();
 
-	bool SetTitle(wstring title);
+	bool SetTitle(wstring& title);
 	void SetCursorVisible(bool vi);
 	void SetCursorPosition(SHORT x, SHORT y);
 
@@ -44,7 +44,7 @@ public:
 	void DrawLineX(SHORT x0, SHORT x1, SHORT y, Color color);
 	// 按Y方向画像素  (y0<y1)
 	void DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color);
-	void DrawString(SHORT x, SHORT y, wstring str,Color color);
+	void DrawString(SHORT x, SHORT y,const wstring& str,Color color);
 
 	//获取指定按键状态 
 	//  key : 指定按键的虚拟码   
@@ -55,37 +55,45 @@ public:
 	//  return  true  当前按下
 	//			false 当前弹起
 	bool IsKeyDown(DWORD key);
-
+	
+	//获得指定的handle
 	HANDLE GetStdIn();
 	HANDLE GetStdOut();
 
+	//是否允许另一个线程异步获得输入
 	bool IsEnableKeyInput();
+	//另一个线程是否在运行
 	bool IsThreadRun();
 	
+	//single instance
 	static CConsole* GetInstance();
 
 public:
 	//切勿随意使用下列函数
+	// do not use the functions 
 	void __SetKeyState(DWORD key, bool state);
 	void __SetKeyInput(bool state);
 	void __ExitInputThread();
 
 private:
+	// handle of console
 	HANDLE m_StdOut,m_StdIn;
 
 	// =false时，线程退出
 	bool m_bInputThread;
+	// handle using to get input from console
 	HANDLE m_hInputThread;
 	
 	// 用来管理键盘的输入状态 当且仅当 m_bKeyInput 为true时其值有效
+	// get the state of any key
 	map<DWORD, bool> m_KeyMap;
 
-	// 用于控制线程2是否获取当前键盘输入  
+	// 用于控制线程2是否获取当前键盘输入
 	//  true  : 获取键盘输入
 	//  false : 休眠
 	bool m_bKeyInput;
 
-
+	// static instance using for single instance
 	static CConsole* pInstance;
 };
 

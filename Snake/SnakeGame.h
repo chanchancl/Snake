@@ -24,14 +24,16 @@ public:
 public:
 	bool Init();
 
+	void Run();
 
+	bool IsNeedRender();
+	void SetNeedRender(bool render);
 	CStateMachine* GetStateMachine();
 	CConsole* GetConsole();
 	static CSnakeGame* GetInstance();
 
 private:
 	CConsole *m_Console;
-	CSnake	 *m_Snake;
 	CStateMachine *m_StateMachine;
 
 	bool m_bNeedToRender;
@@ -39,4 +41,8 @@ private:
 	static CSnakeGame *pInstance;
 };
 
+const SMALL_RECT ConsoleRect = { 0,0,80,25 };
+const SMALL_RECT GameRect = { 2,2,78,23 };
+const SHORT GameSizeWidth = GameRect.Right - GameRect.Left+1;
+const SHORT GameSizeHeight = GameRect.Bottom - GameRect.Top + 1;
 

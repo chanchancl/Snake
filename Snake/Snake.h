@@ -9,17 +9,23 @@ public:
 	CSnake();
 	~CSnake();
 
-	typedef int Dir;
+	enum Dir
+	{
+		Left,
+		Up,
+		Right,
+		Down,
+		UnDefine=-0xff,
+	};
 
 public:
 	bool Init();
-	void Draw();
+	void Render();
 
+	bool Exist(SHORT x, SHORT y);
 public:
-	//业务逻辑
-	// 返回值 true  表示成功前进
-	//        false 表示失败
-	//bool Advance();
+	bool Advance();
+	void ChangeDir(Dir dir);
 
 
 public:
@@ -27,8 +33,9 @@ public:
 	static wstring Body;
 	static wstring Food;
 	static float   Speed;
+	static int	   InitLong;
 
 	Dir m_Dir;
-	list<COORD> m_Snake;
+	list<COORD> m_lsBody;
 };
 

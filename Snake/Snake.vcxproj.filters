@@ -39,6 +39,15 @@
     <ClInclude Include="State.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Food.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scheduler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -62,5 +71,17 @@
     <ClCompile Include="State.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Food.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Scheduler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

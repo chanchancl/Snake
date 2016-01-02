@@ -99,7 +99,7 @@ bool CConsole::Init()
 	return true;
 }
 
-bool CConsole::SetTitle(std::wstring title)
+bool CConsole::SetTitle(wstring& title)
 {
 	//if (!m_StdHandle)
 	//	return false;
@@ -175,13 +175,9 @@ void CConsole::DrawLineY(SHORT x, SHORT y0, SHORT y1, Color color)
 
 
 //设置(x,y)后面的文字为 str，字体颜色为color，但不改变背景色
-void CConsole::DrawString(SHORT x, SHORT y, wstring str,Color color)
+void CConsole::DrawString(SHORT x, SHORT y,const wstring& str,Color color)
 {
-	int WideInConsole = [&]()-> int { int l=0;
-		for (auto it : str)
-			l += isascii(it) ? 1 : 2;
-		return l;
-	}();
+	int WideInConsole = CharWideIC(str);
 	int SizeOfCharacter = str.size();
 
 	StdColor *oldcolor = new StdColor[WideInConsole];
@@ -279,7 +275,7 @@ void OnProcess(LPVOID process)
 		con = CConsole::GetInstance();
 		Sleep(30);
 	}*/
-	bool debug = false;
+
 	while (true)
 	{
 		if (con->IsEnableKeyInput())

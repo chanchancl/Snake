@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Food.h"
 #include "Console.h"
 #include "SnakeGame.h"
 using std::wstring;
@@ -15,11 +16,14 @@ using std::wstring;
 namespace state
 {
 
-#define DECLARE_STATE(StateName)  \
-	virtual wstring GetStateName() { return L"StateName"; } \
-	static StateName* GetInstance() { if(pInstance) return pInstance; else return pInstance = new StateName; } \
-	private: static StateName* pInstance; \
+#define DECLARE_STATE(stateName,strName)  \
+	public: \
+	virtual wstring GetStateName() { return strName; } \
+	static stateName* GetInstance() { if(pInstance) return pInstance; else return pInstance = new stateName; } \
+	private: static stateName* pInstance; \
 
+#define ST_START 1
+#define ST_EXIT  2
 
 	class State
 	{
@@ -32,8 +36,8 @@ namespace state
 
 		void DrawContent();
 
-		//  试验下这种单件模式能不能在派生类正常工作
-		DECLARE_STATE(State)
+		//  试验下这种单件模式能不能在派生类正常工作 learn from MFC hhhhhh...
+		DECLARE_STATE(State, L"State");
 		//virtual wstring GetStateName() { return L"State"; };
 		//static thistype GetInstance()
 	};
@@ -46,12 +50,11 @@ namespace state
 
 		void ChangeState(State* state)
 		{
-			if (pCurrState)
-				pCurrState->Exit();
-
-
 			pPrevState = pCurrState;
 			pCurrState = state;
+
+			if (pPrevState)
+				pPrevState->Exit();
 
 			if (pCurrState)
 				pCurrState->Enter();
@@ -66,13 +69,6 @@ namespace state
 		State* pCurrState;
 
 	};
-
-
-	class MenuState;
-	class GameState;
-
-#define ST_START 1
-#define ST_EXIT  2
 
 	class MenuState : public State
 	{
@@ -94,7 +90,7 @@ namespace state
 
 		State* GetStateFromChoose();
 
-		DECLARE_STATE(MenuState)
+		DECLARE_STATE(MenuState, L"MenuState");
 		//virtual wstring GetStateName() { return L"MenuState"; }
 		//static MenuState GetInstance() { static MenuState ms; return ms; }
 
@@ -113,9 +109,27 @@ namespace state
 		virtual void Input();
 		virtual void Render();
 
-		DECLARE_STATE(GameState)
+		CSnake* GetSnake() const;
+		CFood* GetFood() const;
+
+	private:
+		CSnake *m_Snake;
+		CFood  *m_Food;
+
+		DECLARE_STATE(GameState, L"GameState");
 	};
 
+	class PauseState : public State
+	{
+	public:
+		virtual void Enter();
+		virtual void Exit();
+
+		virtual void Input();
+		virtual void Render();
+
+		DECLARE_STATE(PauseState, L"PauseState");
+	};
 
 
 

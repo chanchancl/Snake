@@ -11,16 +11,21 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <iostream>
-
-
+#include <time.h>
+#include <random>
+#include <exception>
 
 // TODO:  在此处引用程序需要的其他头文件
 #include <windows.h>
 
 
 //自己的头文件
+#include "Tool.h"
+
+#include "Scheduler.h"
 #include "State.h"
 #include "Console.h"
 #include "Snake.h"
 #include "SnakeGame.h"
 #include "Timer.h"
+#include "Food.h"
