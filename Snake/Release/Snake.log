@@ -1,11 +1,7 @@
-﻿  CSnake.cpp
-  Console.cpp
-Console.cpp(115): warning C4018: “<”: 有符号/无符号不匹配
-  Snake.cpp
-  SnakeGame.cpp
+﻿  Snake.cpp
   正在生成代码
-  0 of 74 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  2 of 508 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   Snake.vcxproj -> D:\Program\Project\Snake\Release\Snake.exe

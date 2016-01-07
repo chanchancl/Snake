@@ -18,13 +18,13 @@ COORD GetVectorFromDir(CSnake::Dir dir,bool reversal = false)
 		cod.X = -1; cod.Y = 0;
 		break;
 	case CSnake::Up:
-		cod.X = 0; cod.Y = 1;
+		cod.X = 0; cod.Y = -1;
 		break;
 	case CSnake::Right:
 		cod.X = 1; cod.Y = 0;
 		break;
 	case CSnake::Down:
-		cod.X = 0; cod.Y = -1;
+		cod.X = 0; cod.Y = 1;
 		break;
 	case CSnake::UnDefine:
 	default:
@@ -40,7 +40,7 @@ COORD GetVectorFromDir(CSnake::Dir dir,bool reversal = false)
 }
 bool IsInGameRect(COORD cod)
 {
-	return (cod.X >= GameRect.Left && cod.X <= GameRect.Left) &&
+	return (cod.X >= GameRect.Left && cod.X <= GameRect.Right) &&
 		(cod.Y >= GameRect.Top && cod.Y <= GameRect.Bottom);
 }
 
@@ -108,7 +108,7 @@ bool CSnake::Advance()
 	auto it = m_lsBody.begin();
 	COORD newHead = { it->X + cod.X,it->Y + cod.Y };
 
-	if (!IsInGameRect(newHead))
+	if (!IsInGameRect(newHead) || Exist(newHead.X,newHead.Y))
 	{
 		// you are die
 
@@ -122,23 +122,13 @@ bool CSnake::Advance()
 	else
 		m_lsBody.pop_back();
 
+	CSnakeGame::GetInstance()->SetNeedRender(true);
 	return true;
 }
 
 void CSnake::ChangeDir(Dir dir)
 {
-	if (dir == Left)
-	{
-		m_Dir = (Dir)(m_Dir -1);
-	}
-	if (dir == Right)
-	{
-		m_Dir = (Dir)(m_Dir +1);
-	}
-	if (m_Dir == -1)
-		m_Dir = Down;
-	if (m_Dir == 4)
-		m_Dir = Left;
+	m_Dir = dir;
 }
 
 

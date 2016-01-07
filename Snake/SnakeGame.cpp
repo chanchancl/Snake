@@ -20,11 +20,7 @@ CSnakeGame::~CSnakeGame()
 bool CSnakeGame::Init()
 {
 	m_Console = CConsole::GetInstance();
-	if (!m_Console && !m_Console->Init())
-	{
-		//Console 创建 或 初始化错误(一般为后者)
-		return false;
-	}
+	m_Console->Init();
 
 	//进入游戏， 目录状态
 	//SetGameState(ST_MENU);
@@ -44,7 +40,10 @@ void CSnakeGame::Run()
 		return;
 
 	currentState->Input();
+	currentState->Update();
 	currentState->Render();
+
+	SetNeedRender(false);
 }
 
 bool CSnakeGame::IsNeedRender()

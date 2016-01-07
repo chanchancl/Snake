@@ -16,9 +16,9 @@ using std::wstring;
 namespace state
 {
 
-#define DECLARE_STATE(stateName,strName)  \
+#define DECLARE_STATE(stateName)  \
 	public: \
-	virtual wstring GetStateName() { return strName; } \
+	virtual string GetStateName() { return #stateName; } \
 	static stateName* GetInstance() { if(pInstance) return pInstance; else return pInstance = new stateName; } \
 	private: static stateName* pInstance; \
 
@@ -32,12 +32,13 @@ namespace state
 		virtual void Exit() {}
 
 		virtual void Input() {}
+		virtual void Update() {}
 		virtual void Render() {}
 
 		void DrawContent();
 
 		//  试验下这种单件模式能不能在派生类正常工作 learn from MFC hhhhhh...
-		DECLARE_STATE(State, L"State");
+		DECLARE_STATE(State)
 		//virtual wstring GetStateName() { return L"State"; };
 		//static thistype GetInstance()
 	};
@@ -75,13 +76,8 @@ namespace state
 	public:
 		MenuState() : iChoose(0),iMenuItems(2) { }
 	public:
-		virtual void Enter()
-		{
-			iChoose = 1;
-		}
-		virtual void Exit()
-		{
-		}
+		virtual void Enter();
+		virtual void Exit();
 
 
 		// will be called in every frame
@@ -90,7 +86,7 @@ namespace state
 
 		State* GetStateFromChoose();
 
-		DECLARE_STATE(MenuState, L"MenuState");
+		DECLARE_STATE(MenuState)
 		//virtual wstring GetStateName() { return L"MenuState"; }
 		//static MenuState GetInstance() { static MenuState ms; return ms; }
 
@@ -107,6 +103,7 @@ namespace state
 		virtual void Exit();
 
 		virtual void Input();
+		virtual void Update();
 		virtual void Render();
 
 		CSnake* GetSnake() const;
@@ -116,7 +113,7 @@ namespace state
 		CSnake *m_Snake;
 		CFood  *m_Food;
 
-		DECLARE_STATE(GameState, L"GameState");
+		DECLARE_STATE(GameState)
 	};
 
 	class PauseState : public State
@@ -128,7 +125,7 @@ namespace state
 		virtual void Input();
 		virtual void Render();
 
-		DECLARE_STATE(PauseState, L"PauseState");
+		DECLARE_STATE(PauseState)
 	};
 
 

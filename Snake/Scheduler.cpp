@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "Scheduler.h"
 
-
+/*
 CScheduler::CScheduler()
 {
 }
-
 
 CScheduler::~CScheduler()
 {
@@ -64,3 +63,4 @@ bool operator<(const CallBack &op1,const CallBack &op2)
 	return op1.target_type().hash_code() < op2.target_type().hash_code();
 }
 
+*/

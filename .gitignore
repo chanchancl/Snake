@@ -88,3 +88,5 @@ $RECYCLE.BIN/
 *.opensdf
 *.cd
 Snake/Debug/vc140.idb
+Snake/Debug/vc140.idb
+*.log

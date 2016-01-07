@@ -9,7 +9,12 @@
 
 using namespace std;
 
+// Rewrite this file
+//CallBack ·ÖÀà
+// 1. Class member function
+// 2. Global static function
 
+/*
 typedef function<void ()> CallBack;
 static bool operator<(const CallBack &op1, const CallBack &op2);
 
@@ -38,5 +43,5 @@ public:
 
 };
 
-
+*/
 #endif
