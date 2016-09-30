@@ -40,7 +40,7 @@ void CSnakeGame::Run()
 		return;
 
 	currentState->Input();
-	currentState->Update();
+	/*currentState->Update();*/
 	currentState->Render();
 
 	SetNeedRender(false);

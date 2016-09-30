@@ -32,7 +32,7 @@ namespace state
 		virtual void Exit() {}
 
 		virtual void Input() {}
-		virtual void Update() {}
+		/*virtual void Update() {}*/
 		virtual void Render() {}
 
 		void DrawContent();
@@ -76,8 +76,8 @@ namespace state
 	public:
 		MenuState() : iChoose(0),iMenuItems(2) { }
 	public:
-		virtual void Enter();
-		virtual void Exit();
+        virtual void Enter() {}
+        virtual void Exit() {}
 
 
 		// will be called in every frame
@@ -103,7 +103,7 @@ namespace state
 		virtual void Exit();
 
 		virtual void Input();
-		virtual void Update();
+		/*virtual void Update();*/
 		virtual void Render();
 
 		CSnake* GetSnake() const;
