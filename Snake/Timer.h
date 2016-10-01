@@ -39,8 +39,6 @@ public:
 public:
 	//功能二区
 	
-	
-
 private:
 	DWORD m_LastTime;
 

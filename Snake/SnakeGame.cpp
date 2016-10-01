@@ -33,17 +33,20 @@ bool CSnakeGame::Init()
 
 void CSnakeGame::Run()
 {
-	CStateMachine *csm = GetStateMachine();
-	State *currentState = csm->GetCurrState();
+	State *currentState = GetStateMachine()->GetCurrState();
 
 	if (!currentState)
 		return;
 
-	currentState->Input();
-	/*currentState->Update();*/
-	currentState->Render();
+    
 
-	SetNeedRender(false);
+	currentState->Input();
+	currentState->Update();
+	currentState->Render();
+    
+    currentState->DrawContent();
+	
+    SetNeedRender(false);
 }
 
 bool CSnakeGame::IsNeedRender()

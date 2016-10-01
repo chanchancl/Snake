@@ -31,7 +31,11 @@ namespace state
 
 	}
 
-
+    void MenuState::Enter()
+    {
+        iChoose = 1;
+        CSnakeGame::GetInstance()->SetNeedRender(true);
+    }
 
 	//
 	// MenuState
@@ -136,7 +140,8 @@ namespace state
 	{
 		CSnakeGame *game = CSnakeGame::GetInstance();
 		CStateMachine* statemac = game->GetStateMachine();
-		
+        game->SetNeedRender(true);
+
 		if (statemac->GetPrevState() != PauseState::GetInstance())
 		{
 			if (m_Snake)
@@ -155,30 +160,70 @@ namespace state
 		//do nothing
 	}
 
-	void GameState::Exit()
-	{
-
-	}
-
 	void GameState::Input()
 	{
 		// 处理2个按键事件
 		// 1.转向  2.暂停
-		CConsole *con = CConsole::GetInstance();
+        CConsole *con = CConsole::GetInstance();
 
-		if (con->IsKeyDown(VK_LEFT))
-			m_Snake->ChangeDir(CSnake::Dir::Left);
-		if (con->IsKeyDown(VK_RIGHT))
-			m_Snake->ChangeDir(CSnake::Dir::Right);
+        if ((m_Snake->m_Dir == CSnake::Dir::Up || m_Snake->m_Dir == CSnake::Dir::Down))
+        {
+            if (con->IsKeyDown(VK_LEFT))
+            {
+                m_Snake->ChangeDir(CSnake::Dir::Left);
+                CSnakeGame::GetInstance()->SetNeedRender(true);
+            }
+            else if (con->IsKeyDown(VK_RIGHT))
+            {
+                m_Snake->ChangeDir(CSnake::Dir::Right);
+                CSnakeGame::GetInstance()->SetNeedRender(true);
+            }
+        }
+        if ((m_Snake->m_Dir == CSnake::Dir::Left || m_Snake->m_Dir == CSnake::Dir::Right))
+        {
+            if (con->IsKeyDown(VK_UP))
+            {
+                m_Snake->ChangeDir(CSnake::Dir::Up);
+                CSnakeGame::GetInstance()->SetNeedRender(true);
+            }
+            else if (con->IsKeyDown(VK_DOWN))
+            {
+                m_Snake->ChangeDir(CSnake::Dir::Down);
+                CSnakeGame::GetInstance()->SetNeedRender(true);
+            }
+        }
 
-		// 暂停事件
+        // 暂停事件
+        if (con->IsKeyDown(VK_SPACE))
+        {
+            CSnakeGame *game = CSnakeGame::GetInstance();
+            game->GetStateMachine()->ChangeState(PauseState::GetInstance());
+        }
 
 	}
 
+    void GameState::Update()
+    {
+        //called every frame
+        static int Called = 0;
+
+        Called++;
+        if (Called >= 3)
+        {
+            m_Snake->Advance();
+            Called = 0;
+        }
+    }
+
 	void GameState::Render()
 	{
-		m_Snake->Render();
-		m_Food->Render();
+        CSnakeGame *game = CSnakeGame::GetInstance();
+        if (!game->IsNeedRender())
+            return;
+
+        system("cls");
+        m_Snake->Render();
+        m_Food->Render();
 	}
 
 	CSnake * GameState::GetSnake() const
@@ -196,6 +241,7 @@ namespace state
 	//
 	void PauseState::Enter()
 	{
+
 	}
 
 	void PauseState::Exit()
@@ -204,10 +250,31 @@ namespace state
 
 	void PauseState::Input()
 	{
+        CConsole *con = CConsole::GetInstance();
+        
+        // 由于Run 非常快，在GameState中切换State后，暂停一段时间
+        
+        static CTimer *timer = nullptr;
+        if (!timer)
+            timer = new CTimer(500);
+
+        if (timer->GetElapseTime() > timer->GetInteval() && con->IsKeyDown(VK_SPACE))
+        {
+            timer->OnTick();
+            CSnakeGame *game = CSnakeGame::GetInstance();
+            game->GetStateMachine()->ChangeState(GameState::GetInstance());
+        }
 	}
 
 	void PauseState::Render()
 	{
+        wstring out = L"PAUSE NOW";
+        CConsole *con = CConsole::GetInstance();
+
+        // 覆盖式暂停 233
+        GameState::GetInstance()->Render();
+
+        con->DrawString((GameSizeWidth - out.size()) / 2, GameSizeHeight / 2, out, STD_RED);
 	}
 
 }

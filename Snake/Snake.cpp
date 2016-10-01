@@ -9,7 +9,7 @@ wstring CSnake::Food = L"*";
 float CSnake::Speed = 1.0;
 int   CSnake::InitLong = 3;
 
-COORD GetVectorFromDir(CSnake::Dir dir,bool reversal = false)
+COORD GetVectorFromDir(const CSnake::Dir& dir,bool reversal = false)
 {
 	COORD cod = { 0,0 };
 	switch (dir)
@@ -38,7 +38,7 @@ COORD GetVectorFromDir(CSnake::Dir dir,bool reversal = false)
 	}
 	return cod;
 }
-bool IsInGameRect(COORD cod)
+bool IsInGameRect(const COORD& cod)
 {
 	return (cod.X >= GameRect.Left && cod.X <= GameRect.Right) &&
 		(cod.Y >= GameRect.Top && cod.Y <= GameRect.Bottom);
@@ -82,13 +82,15 @@ void CSnake::Render()
 	bool first = true;
 	for (auto const it : m_lsBody)
 	{
+        /*auto color = MakeColor(0,RandomInt(1,7));*/
+        auto color = STD_WHITE;
 		if (first)
 		{
 			first = false;
-			con->DrawString(it.X, it.Y, CSnake::Head, STD_WHITE);
+			con->DrawString(it.X, it.Y, CSnake::Head, color);
 		}
 		else
-			con->DrawString(it.X, it.Y, CSnake::Body, STD_WHITE);
+			con->DrawString(it.X, it.Y, CSnake::Body, color);
 	}
 }
 

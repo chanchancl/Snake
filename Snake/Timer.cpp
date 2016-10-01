@@ -56,7 +56,7 @@ CTimer::operator bool()
 {
 	WaitForTimer();
 	OnTick();
-	return m_Inteval != 0 ? true : false;
+	return m_Inteval != 0;
 }
 
 
